@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import axios from 'axios'
+import qs from 'qs'
+import urls from './urls'
 
 Vue.use(Vuex);
 export default new Vuex.Store({
@@ -27,7 +30,28 @@ export default new Vuex.Store({
         editArticleId: localStorage.editArticleId
     },
     actions: {
-
+        LoginAction({
+            commit,
+            state
+        }) {
+            axios
+                .post(
+                    urls.urls + "Graduation/ReadData",
+                    qs.stringify({
+                        batch: true,
+                        object: 'news'
+                    })
+                )
+                .then(result => {
+                    commit('NewsList_M', {
+                        result
+                    });
+                    console.log(result);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
     },
     mutations: {
         Scroll_M(state, {
