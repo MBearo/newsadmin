@@ -5,12 +5,12 @@
                 新闻管理后台
             </div>
             <div class="flex-1">
-                <el-menu default-active="1" @open="handleOpen" @close="handleClose" mode="horizontal">
-                    <el-menu-item index="1">
+                <el-menu default-active="1" @open="handleOpen" @close="handleClose" mode="horizontal" :router="true">
+                    <el-menu-item index="1" route="News">
                         <i class="el-icon-menu"></i>
                         <span slot="title">新闻管理</span>
                     </el-menu-item>
-                    <el-menu-item index="2">
+                    <el-menu-item index="2" route="Users">
                         <i class="el-icon-document"></i>
                         <span slot="title">用户管理</span>
                     </el-menu-item>
@@ -21,9 +21,9 @@
                 </el-menu>
             </div>
             <div class="person flex-0 flex">
-                <el-button plain size="small" v-popover:popover2>用户名</el-button>
+                <el-button plain size="small" v-popover:popover2>{{$store.state.user.name}}</el-button>
                 <el-popover ref="popover2" placement="bottom" trigger="click">
-                    <div class="color-danger text-center logout">
+                    <div class="color-danger text-center logout" @click="logout">
                         退出
                     </div>
                 </el-popover>
@@ -37,12 +37,18 @@
 
 <script>
 export default {
+  created() {
+      this.$store.dispatch('CategoryAction')
+  },
   methods: {
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath);
+    },
+    logout(){
+      this.$router.push('/login')
     }
   }
 };
@@ -65,13 +71,13 @@ export default {
   padding: 10px;
   box-sizing: border-box;
 }
-.content>div{
-    padding: 10px;
+.content > div {
+  padding: 10px;
 }
-.content>div>>>h3{
-    font-weight: bold;
-    margin: 0;
-    font-size: 18px;
+.content > div>>>h3 {
+  font-weight: bold;
+  margin: 0;
+  font-size: 18px;
 }
 .logo {
   line-height: 61px;

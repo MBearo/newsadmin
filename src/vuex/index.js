@@ -14,7 +14,7 @@ export default new Vuex.Store({
             desc: '',
             id: 102,
             male: '',
-            name: "u_nQVQUZ0rzE9t",
+            name: "",
             nick: '',
             tag: []
         },
@@ -27,7 +27,8 @@ export default new Vuex.Store({
             contents: ''
         },
         articleId: localStorage.articleId,
-        editArticleId: localStorage.editArticleId
+        editArticleId: localStorage.editArticleId,
+        category: []
     },
     actions: {
         LoginAction({
@@ -52,6 +53,29 @@ export default new Vuex.Store({
                     console.log(error);
                 });
         },
+        CategoryAction({
+            commit,
+            state
+        }) {
+            axios
+                .post(
+                    urls.urls + "Graduation/ReadData",
+                    qs.stringify({
+                        batch: true,
+                        object: 'category'
+                    })
+                )
+                .then(result => {
+                    commit('Category_M', {
+                        result
+                    });
+                    console.log(result);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+        
     },
     mutations: {
         Scroll_M(state, {
@@ -64,6 +88,11 @@ export default new Vuex.Store({
         }) {
             state.token = result.data.data.token;
             state.user = result.data.data.user;
+        },
+        Category_M(state, {
+            result
+        }) {
+            state.category = result.data.data.list;
         },
     },
     getters: {},

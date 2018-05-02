@@ -19,6 +19,7 @@ Vue.use(ElementUI);
 
 Vue.prototype.$axios = axios
 Vue.prototype.$url = urls.urls
+Vue.prototype.$url2 = urls.url2
 Vue.prototype.$qs = qs
 
 

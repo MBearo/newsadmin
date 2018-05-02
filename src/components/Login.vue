@@ -70,9 +70,9 @@ export default {
     login() {
       this.load = true;
       this.loginText = "正在登录..";
-      axios
+      this.$axios
         .post(
-          urls.urls + "Graduation/ReadData",
+          urls.urls + "Graduation/Login",
           qs.stringify({
             username: this.name,
             password: this.password
@@ -82,6 +82,21 @@ export default {
           // commit("NewsList_M", {
           //   result
           // });
+          if(result.data.errorcode==0){
+            this.$message({
+              showClose: true,
+              message: '登录成功',
+              type: "success"
+            });
+            this.$store.state.user.name=this.name;
+            this.$router.push('frame/news')
+          }else{
+            this.$message({
+              showClose: true,
+              message: result.data.msg,
+              type: "error"
+            });
+          }
           console.log(result);
         })
         .catch(error => {

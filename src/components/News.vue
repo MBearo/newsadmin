@@ -1,88 +1,65 @@
 <template>
-    <div>
-        <div class="flex">
-            <h3 class="flex-1">新闻列表</h3>
-            <div class="flex-0">
-                <el-button type="primary" icon="el-icon-plus" @click="dialogTableVisible=true">添加新闻</el-button>
-            </div>
-        </div>
-        <div class="">
-            <el-table :data="tableData" style="width: 100%">
-                <el-table-column prop="Title" label="标题">
-                </el-table-column>
-                <el-table-column label="内容">
-                    <template slot-scope="scope">
-                        <span class="nowrap">
-                            {{scope.row.Content}}
-                        </span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="Author" label="作者">
-                </el-table-column>
-                <el-table-column prop="PublishDate" label="创建时间">
-                </el-table-column>
-                <el-table-column prop="Category" label="分类">
-                </el-table-column>
-                <el-table-column prop="ReadTime" label="阅读次数">
-                </el-table-column>
-                <el-table-column label="操作">
-                    <template slot-scope="scope">
-                        <el-button type="text" size="small">
-                            详情
-                        </el-button>
-                        <el-button type="text" size="small" class="color-danger">
-                            删除
-                        </el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-        </div>
-        <el-dialog title="新建新闻" :visible.sync="dialogTableVisible" :before-close="handleClose">
-            <el-form ref="form" :model="form" label-width="80px">
-                <el-form-item label="新闻标题">
-                    <el-input v-model="form.name"></el-input>
-                </el-form-item>
-                <el-form-item label="新闻内容">
-                    <el-input type="textarea" v-model="form.desc"></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="onSubmit">立即创建</el-button>
-                    <el-button @click="handleClose">取消</el-button>
-                </el-form-item>
-            </el-form>
-        </el-dialog>
-
+  <div>
+    <div class="flex">
+      <h3 class="flex-1">新闻列表</h3>
+      <div class="flex-0">
+        <el-button type="primary" icon="el-icon-plus" @click="addNews">添加新闻</el-button>
+      </div>
     </div>
+    <div class="">
+      <el-table :data="tableData" style="width: 100%">
+        <el-table-column prop="Title" label="标题">
+        </el-table-column>
+        <el-table-column label="内容">
+          <template slot-scope="scope">
+            <span class="nowrap">
+              {{scope.row.Content}}
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="Author" label="作者">
+        </el-table-column>
+        <el-table-column prop="PublishDate" label="创建时间">
+        </el-table-column>
+        <el-table-column prop="Category" label="分类">
+        </el-table-column>
+        <el-table-column prop="ReadTime" label="阅读次数" sortable :sort-method="sortFun">
+        </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <!-- <el-button type="text" size="small">
+              详情
+            </el-button> -->
+            <el-button type="text" size="small" class="color-danger" @click="deletes(scope.row.Id)">
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+  </div>
 </template>
 
 <script>
+import axios from "axios";
+import qs from "qs";
+import urls from "../vuex/urls";
 export default {
   created() {
     this.refresh();
+    this.$store.dispatch("CategoryAction");
   },
   data() {
     return {
-      tableData: [],
-      dialogTableVisible: false,
-      form: {
-        name: "",
-        desc: ""
-      }
+      tableData: []
     };
   },
   methods: {
-    handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then(_ => {
-          this.dialogTableVisible = false;
-        })
-        .catch(_ => {});
-    },
     onSubmit() {
       this.$axios
         .post(
-          this.$url + "Graduation/ReadData",
-          this.$qs.stringify({
+          urls.urls + "Graduation/ReadData",
+          qs.stringify({
             batch: true,
             object: "news",
             priKey: "id"
@@ -108,6 +85,46 @@ export default {
             showClose: true,
             message: "请检查网络连接",
             type: "error"
+          });
+        });
+    },
+    deletes(id) {
+      this.$confirm("此操作将永久删除该新闻, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.$axios
+            .post(
+              urls.urls + "Graduation/DeleteData",
+              qs.stringify({
+                object: "news",
+                priKey: "id",
+                value: id
+              })
+            )
+            .then(result => {
+              console.log(result);
+              this.refresh();
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
+            })
+            .catch(error => {
+              console.log(error);
+              this.$message({
+                showClose: true,
+                message: "请检查网络连接",
+                type: "error"
+              });
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
           });
         });
     },
@@ -118,11 +135,12 @@ export default {
           this.$qs.stringify({
             batch: true,
             object: "news",
-            priKey: "id"
+            ascOrDesc: "DESC",
+            orderBy: "Id"
           })
         )
         .then(result => {
-          console.log(result);
+          console.log(result.data);
           if (result.data.errorcode == 0) {
             result.data.data.list.forEach(value => {
               this.tableData.push(value);
@@ -143,6 +161,12 @@ export default {
             type: "error"
           });
         });
+    },
+    sortFun(a, b) {
+      return a.ReadTime - b.ReadTime;
+    },
+    addNews() {
+      this.$router.push("AddNews");
     }
   }
 };
