@@ -82,13 +82,15 @@ export default {
           // commit("NewsList_M", {
           //   result
           // });
+          console.log(result)
           if(result.data.errorcode==0){
             this.$message({
               showClose: true,
               message: '登录成功',
               type: "success"
             });
-            this.$store.state.user.name=this.name;
+            this.$store.commit('User_M',{result})
+           // localStorage.token=result.data.data
             this.$router.push('frame/news')
           }else{
             this.$message({

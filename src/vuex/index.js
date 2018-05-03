@@ -8,7 +8,9 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
         // token:"9SoQjTk7rsUSF0fSLZdYW0AJb0jVBkN8LIyClNFw9ICRHKAsVUpcVpPRHrlH",
-        token: localStorage.token,
+        token: {
+            Id:''
+        },
         user: {
             img: 'http://img2.cache.netease.com/game/img17/blizzard/img/new_icon_7.png',
             desc: '',
@@ -86,8 +88,9 @@ export default new Vuex.Store({
         User_M(state, {
             result
         }) {
-            state.token = result.data.data.token;
-            state.user = result.data.data.user;
+            console.log(result)
+            state.token = result.data.data;
+           // state.user = result.data.data.user;
         },
         Category_M(state, {
             result

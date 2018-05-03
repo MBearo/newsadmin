@@ -1,10 +1,10 @@
 <template>
     <div>
         <div class="flex">
-            <h3 class="flex-1">新闻列表</h3>
-            <div class="flex-0">
+            <h3 class="flex-1">用户列表</h3>
+            <!-- <div class="flex-0">
                 <el-button type="primary" icon="el-icon-plus" @click="addNews">添加新闻</el-button>
-            </div>
+            </div> -->
         </div>
         <div class="">
             <el-table :data="tableData" style="width: 100%">

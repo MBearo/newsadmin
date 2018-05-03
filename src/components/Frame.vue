@@ -21,7 +21,7 @@
                 </el-menu>
             </div>
             <div class="person flex-0 flex">
-                <el-button plain size="small" v-popover:popover2>{{$store.state.user.name}}</el-button>
+                <el-button plain size="small" v-popover:popover2>{{$store.state.token.Username}}</el-button>
                 <el-popover ref="popover2" placement="bottom" trigger="click">
                     <div class="color-danger text-center logout" @click="logout">
                         退出
